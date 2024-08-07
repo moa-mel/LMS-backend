@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const multer = require('multer');
 
 // Directory to store uploads from environment variable or default to './uploads'
 const uploadDir = process.env.UPLOAD_DIR || path.join(__dirname, 'uploads');
