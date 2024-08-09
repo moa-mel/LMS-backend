@@ -16,9 +16,10 @@ const {
 const authenticate = require("../middleware/fellow-auth")
 const notification = require('../controllers/fellow/notification')
 
+
 //fellow
 router.post('/fellow/login', fellowLogin) 
-router.post('/fellow/signup', upload.single('fellowCV'), fellowRegister) 
+router.post('/fellow/signup',  fellowRegister) 
 router.post('/fellow/create-password', createPassword)
 router.post('/fellow/reset-password', resetPassword);
 router.post('/fellow/update-password', updatePassword);

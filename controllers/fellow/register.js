@@ -5,11 +5,15 @@ const upload = require('../../utils/uploadFile');
 
 const fellowRegister = async (req, res) => {
     try {
+       console.log(req)
+
         const { firstName, lastName, email, role, portfolio, linkedIn, github, dribble, behance } = req.body;
-        const fellowCV = req.file ? req.file.path : '';
+
+        const fellowCV = req.files[0].path || '';
+        
 
         // Validation
-        const { error } = signUpSchema.validate({ firstName, lastName, email, role, fellowCV, portfolio, linkedIn, github, dribble, behance });
+        const { error } = signUpSchema.validate({ firstName, lastName, email, fellowCV, role, portfolio, linkedIn, github, dribble, behance });
         if (error) {
             return res.status(400).json({ message: error.details[0].message });
         }
@@ -19,7 +23,7 @@ const fellowRegister = async (req, res) => {
             lastName,
             email,
             role,
-            fellowCV,
+            fellowCV:fellowCV,
             portfolio,
             linkedIn,
             github,
