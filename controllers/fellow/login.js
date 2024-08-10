@@ -15,7 +15,7 @@ const fellowLogin = async(req, res)=>{
     }
     const token = jwt.sign({email: user.email}, process.env.TOKEN_KEY, {expiresIn: "24h"})
     res.cookie('token', token, {httpOnly:true ,maxAge: 360000})
-    return res.json({status:true, message: "login successfully"})
+    return res.json({status:true, message: "login successfully", token})
 }
 
 module.exports = fellowLogin
