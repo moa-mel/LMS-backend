@@ -59,7 +59,7 @@ const fellowRegister = async (req, res) => {
         const token = generatePasswordCreationToken(user.email);
         sendPasswordCreationEmail(user.email, token);
   
-        return res.status(200).json({ status: true, message: 'Registration completed, check your email to create password' });
+        return res.status(200).json({ status: true, message: 'Registration completed, check your email to create password', token });
       });
     } catch (error) {
       console.error(error);
