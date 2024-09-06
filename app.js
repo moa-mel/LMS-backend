@@ -2,10 +2,10 @@ const express = require('express');
 const mongoose = require("mongoose");
 const dotenv = require('dotenv').config();
 const cookieParser = require('cookie-parser');
-const multer = require('multer');
+const cors = require('cors')
 const fellowRouter = require("./routes/fellowRoute");
 const adminRoute = require("./routes/adminRoute");
-const cloudinary = require('cloudinary').v2
+
 
 const app = express();
 
