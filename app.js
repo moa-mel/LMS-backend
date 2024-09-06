@@ -24,7 +24,7 @@ app.use(cookieParser());
 
 // Routes
 app.use('/api', fellowRouter);
-app.use('', adminRoute);
+app.use('/api/admin', adminRoute);
 
 // Database connection
 mongoose.connect(process.env.DB_CONNECT)

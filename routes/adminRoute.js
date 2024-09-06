@@ -6,13 +6,13 @@ const adminPassword = require("../controllers/admin/admin-password")
 const { getProject,  updateProject, createProject} = require("../controllers/admin/newProject")
 
 //admin
-router.post('/admin/login', adminLogin) 
-router.post('/admin/signup',  adminRegister) 
-router.post('/admin/create-password', adminPassword)
+router.post('/login', adminLogin) 
+router.post('/signup',  adminRegister) 
+router.post('/create-password', adminPassword)
 /* New Project*/ 
-router.post('/admin/new-project/create', createProject)
-router.get('/admin/new-project/getproject', getProject)
-router.put('/admin/new-project/edit/:id', updateProject)
+router.post('/new-project/create', createProject)
+router.get('/new-project/getproject', getProject)
+router.put('/new-project/edit/:id', updateProject)
 
 module.exports = router;
 
