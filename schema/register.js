@@ -16,7 +16,7 @@ const signUpSchema = Joi.object({
         'devops',
         'quality assurance'
     ).required(),
-    fellowCV: Joi.string().required(),
+    fellowCV: Joi.string(),
     portfolio: Joi.string().uri().required(),
     linkedIn: Joi.string().uri().required(),
     github: Joi.string().uri().allow(''),
