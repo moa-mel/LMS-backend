@@ -402,8 +402,11 @@
 
 const express = require('express')
 const router = express.Router()
+const multer = require('multer')
+const storage = require('../utils/multer')
+var upload = multer({storage: storage })
 const fellowLogin = require('../controllers/fellow/login')
-const {fellowRegister, upload} = require('../controllers/fellow/register')
+const {fellowRegister} = require('../controllers/fellow/register')
 const createPassword = require("../controllers/fellow/create-password")
 const resetPassword = require("../controllers/fellow/reset-password")
 const updatePassword = require("../controllers/fellow/update-password")
@@ -421,7 +424,7 @@ const notification = require('../controllers/fellow/notification')
 
 //fellow
 router.post('/fellow/login', fellowLogin) 
-router.post('/fellow/signup',  fellowRegister) 
+router.post('/fellow/signup',  upload.single('fellowCV'),fellowRegister) 
 router.post('/fellow/create-password', createPassword)
 router.post('/fellow/reset-password', resetPassword);
 router.post('/fellow/update-password', updatePassword);
