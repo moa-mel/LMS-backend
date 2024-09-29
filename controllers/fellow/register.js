@@ -1,24 +1,21 @@
 const Fellow = require('../../models/fellow');
 const signUpSchema = require('../../schema/register');
 const { generatePasswordCreationToken, sendPasswordCreationEmail } = require('../../utils/send-email');
-const uploadImage = require('../../utils/uploadImage');
+const { uploadImage } = require('../../utils/uploadImage');
 
 const fellowRegister = async (req, res) => {
-    // Access the form data fields
     const { firstName, lastName, email, role, portfolio, linkedIn, github, dribble, behance } = req.body;
 
     try {
-        // Validate input
         const { error } = signUpSchema.validate({ firstName, lastName, email, role, portfolio, linkedIn, github, dribble, behance });
         if (error) {
             return res.status(400).json({ message: error.details[0].message });
         }
 
-        // Handle the file if uploaded
         let fellowCV;
-        if (req.file && req.file.path) {
+        if (req.file && req.file.buffer) {
             try {
-                const uploadImageSuccess = await uploadImage(req.file.path);
+                const uploadImageSuccess = await uploadImage(req.file.buffer);
                 if (!uploadImageSuccess) {
                     console.log('Something went wrong - image upload');
                     return res.status(500).json({ message: 'Image upload failed' });
@@ -30,7 +27,6 @@ const fellowRegister = async (req, res) => {
             }
         }
 
-        // Create new Fellow instance and save to DB
         const user = new Fellow({
             firstName,
             lastName,
@@ -46,7 +42,6 @@ const fellowRegister = async (req, res) => {
 
         await user.save();
 
-        // Generate token and send email
         const token = generatePasswordCreationToken(user.email);
         sendPasswordCreationEmail(user.email, token);
 
