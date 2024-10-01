@@ -402,11 +402,8 @@
 
 const express = require('express')
 const router = express.Router()
-const multer = require('multer')
-const storage = require('../utils/multer')
-var upload = multer({storage: storage })
 const fellowLogin = require('../controllers/fellow/login')
-const {fellowRegister} = require('../controllers/fellow/register')
+const {fellowRegister, upload} = require('../controllers/fellow/register')
 const createPassword = require("../controllers/fellow/create-password")
 const resetPassword = require("../controllers/fellow/reset-password")
 const updatePassword = require("../controllers/fellow/update-password")
@@ -420,22 +417,22 @@ const {
 } = require("../controllers/fellow/getProject")
 const authenticate = require("../middleware/fellow-auth")
 const notification = require('../controllers/fellow/notification')
-
+const cors = require('cors')
 
 //fellow
-router.post('/fellow/login', fellowLogin) 
-router.post('/fellow/signup',  upload.single('fellowCV'),fellowRegister) 
-router.post('/fellow/create-password', createPassword)
-router.post('/fellow/reset-password', resetPassword);
-router.post('/fellow/update-password', updatePassword);
-router.post('/fellow/confirm-token', resetToken);
-router.post('/fellow/assessment', authenticate, saveAssessment)
-router.get('/fellow/assigned-project', getAssignedProjects);
-router.get('/fellow/completed-project', getCompletedProjects);
-router.get('/fellow/in-progress-project', getInProgressProjects);
-router.get('/fellow/available-project', getAvailableProjects);
-router.get('/fellow/assessment', authenticate, getAssessment)
-router.get('/fellow/notification', notification);
+router.post('/fellow/login', cors() ,fellowLogin) 
+router.post('/fellow/signup', cors() , fellowRegister) 
+router.post('/fellow/create-password', cors() ,createPassword)
+router.post('/fellow/reset-password', cors() ,resetPassword);
+router.post('/fellow/update-password', cors() ,updatePassword);
+router.post('/fellow/confirm-token', cors() ,resetToken);
+router.post('/fellow/assessment', cors() ,authenticate, saveAssessment)
+router.get('/fellow/assigned-project', cors() ,getAssignedProjects);
+router.get('/fellow/completed-project', cors() ,getCompletedProjects);
+router.get('/fellow/in-progress-project', cors() ,getInProgressProjects);
+router.get('/fellow/available-project', cors() ,getAvailableProjects);
+router.get('/fellow/assessment', cors() ,authenticate, getAssessment)
+router.get('/fellow/notification', cors() ,notification);
 
 
 module.exports = router;
