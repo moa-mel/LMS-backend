@@ -1,33 +1,29 @@
 const Fellow = require('../../models/fellow');
-const signUpSchema = require('../../schema/register');
+const signUpSchema = require("../../schema/register");
 const { generatePasswordCreationToken, sendPasswordCreationEmail } = require('../../utils/send-email');
-const { uploadImage } = require('../../utils/uploadImage');
+const upload = require('../../utils/uploadFile');
+const cloudinary = require('../../utils/cloudinary');
+
 
 const fellowRegister = async (req, res) => {
-    const { firstName, lastName, email, role, portfolio, linkedIn, github, dribble, behance } = req.body;
-
     try {
-        const { error } = signUpSchema.validate({ firstName, lastName, email, role, portfolio, linkedIn, github, dribble, behance });
+
+        const { firstName, lastName, email, role,portfolio, linkedIn, github, dribble, behance } = await req.body;
+        const file = await req.file;
+        console.log(File)
+
+        const response = await cloudinary.uploader.upload(file.path, {folder: "LMS", resource_type: 'raw'})
+        // // Validation
+        console.log(response)
+        const fellowCV = response.secure_url
+        const { error } = signUpSchema.validate({ firstName, lastName, email, fellowCV, role, portfolio, linkedIn, github, dribble, behance });
         if (error) {
-            return res.status(400).json({ message: error.details[0].message });
+            return res.status(400).json({ 'message': error.details[0].message });
+          
         }
 
-        let fellowCV;
-        if (req.file && req.file.buffer) {
-            try {
-                const uploadImageSuccess = await uploadImage(req.file.buffer);
-                if (!uploadImageSuccess) {
-                    console.log('Something went wrong - image upload');
-                    return res.status(500).json({ message: 'Image upload failed' });
-                }
-                fellowCV = uploadImageSuccess.public_id;
-            } catch (error) {
-                console.log(error.message);
-                return res.status(500).json({ message: 'Image upload failed' });
-            }
-        }
 
-        const user = new Fellow({
+        const user = await new Fellow({
             firstName,
             lastName,
             email,
@@ -37,19 +33,29 @@ const fellowRegister = async (req, res) => {
             linkedIn,
             github,
             dribble,
-            behance,
+            behance
         });
 
-        await user.save();
+        // // await user.save();
+        await Fellow.create(user)
+        .then(()=>{
+            const token = generatePasswordCreationToken(user.email);
+            sendPasswordCreationEmail(user.email, token);
 
-        const token = generatePasswordCreationToken(user.email);
-        sendPasswordCreationEmail(user.email, token);
+            return res.status(200).json({ status: true, message: "Registration completed, check your email to create password" });
+        })
+        .catch(err=>{
+            throw (err)
+        })
+// 
+     } catch (error) {
+        // This is to Check if the email in entered has been registered
+        if(error.message.includes("E11000 duplicate key")){
+            return res.status(400).json({ 'message': "Email already exists" });
+        }
 
-        return res.status(200).json({ status: true, message: 'Registration completed, check your email to create a password', token });
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: 'Internal server error' });
+        return res.status(500).json({ 'message': error.message });
     }
-};
+}
 
-module.exports = { fellowRegister };
+module.exports = { fellowRegister, upload };

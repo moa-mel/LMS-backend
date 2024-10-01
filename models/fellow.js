@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+// const Schema = mongoose.Schema;
 
-const fellowSchema = new Schema({
+const fellowSchema = new mongoose.Schema({
      
     email: {
         type: String,
@@ -38,11 +38,11 @@ const fellowSchema = new Schema({
     },
     fellowCV: {
         type: String,
-        // required: true
+        required: true
     },
     portfolio: {
         type: String,
-        required: true
+        // required: true
     },
     linkedIn: {
         type: String,
@@ -94,5 +94,5 @@ fellowSchema.methods.generateToken = function () {
     return token;
 };
 
-const Fellow = mongoose.model("Fellow", fellowSchema);
+const Fellow = new mongoose.model("Fellow", fellowSchema);
 module.exports = Fellow;
