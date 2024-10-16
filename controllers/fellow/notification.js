@@ -2,13 +2,18 @@ const { MongoClient } = require('mongodb');
 
 const uri = process.env.DB_CONNECT;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+let isClientConnected = false; // Variable to track connection status
+
+const connectToDatabase = async () => {
+    if (!isClientConnected) {
+        await client.connect();
+        isClientConnected = true; // Set to true once connected
+    }
+};
 
 const notification = async (req, res) => {
     try {
-        // Connect to the MongoDB server if not already connected
-        if (!client.isConnected()) {
-            await client.connect();
-        }
+        await connectToDatabase(); // Connect only if not connected
 
         const database = client.db('test');
         const projectsCollection = database.collection('fellows');
@@ -42,10 +47,13 @@ const notification = async (req, res) => {
         });
     } catch (err) {
         res.status(500).json({ error: err.message });
-    } finally {
-        // Ensure the client is closed after the operation is done
-        await client.close();
     }
 };
+
+// Call client.close() on application shutdown to gracefully close the connection
+process.on('SIGINT', async () => {
+    await client.close();
+    process.exit(0);
+});
 
 module.exports = notification;
