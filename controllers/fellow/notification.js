@@ -1,10 +1,11 @@
 const { MongoClient } = require('mongodb');
 
 const uri = process.env.DB_CONNECT;
-const client = new MongoClient(uri);
+const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
 const notification = async (req, res) => {
     try {
+        // Connect to the MongoDB server if not already connected
         if (!client.isConnected()) {
             await client.connect();
         }
@@ -41,6 +42,9 @@ const notification = async (req, res) => {
         });
     } catch (err) {
         res.status(500).json({ error: err.message });
+    } finally {
+        // Ensure the client is closed after the operation is done
+        await client.close();
     }
 };
 
